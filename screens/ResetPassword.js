@@ -1,9 +1,9 @@
-import { Text, View, TextInput, ImageBackground, Button, KeyboardAvoidingView, Platform } from 'react-native';
+import { Text, View, TextInput, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
 import A from '../styles/A';
 import InlineTextButton from '../components/InlineTextButton';
 import React from 'react';
-// import { auth } from "../firebase";
-// import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from "../firebase";
+import { sendPasswordResetEmail } from 'firebase/auth';
 
 export default function ResetPassword({ navigation }) {
     const background = require("../assets/background.jpg");
@@ -36,15 +36,17 @@ export default function ResetPassword({ navigation }) {
                     value={email}
                     onChangeText={setEmail} />
                 <View style={[A.rowContainer, A.topMargin]}>
-                    <Text style={A.lightText}>Log in? </Text>
+                    <Text style={A.lightText}>Remembered your password? </Text>
                     <InlineTextButton text="Login" onPress={() => navigation.navigate("Login")} />
                 </View>
                 <View style={[A.rowContainer, A.topMargin]}>
                     <Text style={A.lightText}>Don't have an account? </Text>
                     <InlineTextButton text="Sign Up" onPress={() => navigation.navigate("SignUp")} />
                 </View>
-
-
+                <View style={[A.rowContainer, A.topMargin]}>
+                    <Text style={A.lightText}>Send Password Reset Email </Text>
+                    <InlineTextButton text="Reset Password" onPress={resetPassword} />
+                </View>
             </KeyboardAvoidingView>
         </ImageBackground>
     );
