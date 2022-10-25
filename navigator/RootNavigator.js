@@ -6,6 +6,7 @@ import ToDo from '../screens/ToDo';
 import Services from '../screens/Services';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native'
+import ManageAccount from '../screens/ManageAccount';
 
 const Stack = createNativeStackNavigator();
 
@@ -32,6 +33,10 @@ const RootNavigator = () => {
                 <Stack.Screen
                     name="Services"
                     component={Services}
+                    options={{ headerShown: false }} />
+                <Stack.Screen
+                    name="Manage Account"
+                    component={ManageAccount}
                     options={{ headerShown: false }} />
             </Stack.Navigator>
         </NavigationContainer>

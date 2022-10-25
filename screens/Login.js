@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { ImageBackground, KeyboardAvoidingView, Text, TextInput, View, Button } from 'react-native';
 import InlineTextButton from '../components/InlineTextButton';
 import { auth } from '../firebase'
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import A from '../styles/A'
 
 
@@ -12,6 +12,12 @@ export default function Login({ navigation }) {
 
     if (auth.currentUser) {
         navigation.navigate("ToDo")
+    } else {
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                navigation.navigate('ToDo')
+            }
+        });
     }
 
     const [errorMessage, setErrorMessage] = useState('')
