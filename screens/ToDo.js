@@ -32,8 +32,19 @@ const ToDo = ({ navigation }) => {
     };
 
     if (isLoading) {
-        loadToDoList()
+        loadToDoList();
     }
+
+    let checkToDoItem = (item, isChecked) => {
+        const toDoRef = doc(db, 'todos', item.id);
+        setDoc(toDoRef, { completed: isChecked }, { merge: true });
+    };
+
+    let deleteToDo = async (toDoId) => {
+        await deleteDoc(doc(db, "todos", toDoId));
+        let updatedToDos = [...toDos].filter((item) => item.id != toDoId);
+        setToDos(updatedToDos);
+    };
 
     let logout = () => {
         signOut(auth).then(() => {
@@ -41,14 +52,10 @@ const ToDo = ({ navigation }) => {
         })
     }
 
-    let checkToDoItem = (item, isChecked) => {
-
-    }
-
     let renderToDoItem = ({ item }) => {
         return (
-            <View style={[AppStyles.rowContainer, AppStyles.rightMargin, AppStyles.leftMargin]}>
-                <View style={AppStyles.fillSpace}>
+            <View style={[A.rowContainer, A.rightMargin, A.leftMargin]}>
+                <View style={A.fillSpace}>
                     <BouncyCheckbox
                         isChecked={item.complated}
                         size={25}
@@ -80,50 +87,57 @@ const ToDo = ({ navigation }) => {
 
     let showContent = () => {
         return (
-            <View style={A.container}>
-                {isLoading ? <ActivityIndicator size='large' /> : showToDoList()}
-                <Button title="Add To Do" onPress={() => setModalVisible(true)} color='#db4608' />
+            <View>
+                {isLoading ? <ActivityIndicator size="large" /> : showToDoList()}
+                <Button
+                    title="Add ToDo"
+                    onPress={() => setModalVisible(true)}
+                    color="#fb4d3d" />
             </View>
-        )
-    }
+        );
+    };
 
     let showSendVerificationEmail = () => {
         return (
             <View>
-                <Text>PLease Verify your email to use ToDo</Text>
+                <Text>Please verify your email to use ToDo</Text>
                 <Button title="Send Verification Email" onPress={() => sendEmailVerification(auth.currentUser)} />
             </View>
-        )
-    }
+        );
+    };
 
-    const addToDo = async (todo) => {
-        const docRef = await addDoc(collection(db, "todos"), {
+    let addToDo = async (todo) => {
+        let toDoToSave = {
             text: todo,
             completed: false,
-            // adds current users ID to the document being made
             userId: auth.currentUser.uid
-        });
-    }
+        };
+        const docRef = await addDoc(collection(db, "todos"), toDoToSave);
+
+        toDoToSave.id = docRef.id;
+
+        let updatedToDos = [...toDos];
+        updatedToDos.push(toDoToSave);
+
+        setToDos(updatedToDos);
+    };
 
     return (
-        <SafeAreaView style={A.container} >
-            <View style={[A.rowContainer, A.rightAligned, A.rightMargin]} >
-                <InlineTextButton text='Manage Account' color='#db4608' />
+        <SafeAreaView>
+            <View style={[A.rowContainer, A.rightAligned, A.rightMargin, A.topMargin]}>
+                <InlineTextButton text="Manage Account" color="#258ea6" onPress={() => navigation.navigate("ManageAccount")} />
             </View>
             <Modal
-                animationType='slide'
+                animationType="slide"
                 transparent={true}
                 visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)}
-            >
+                onRequestClose={() => setModalVisible(false)}>
                 <AddToDoModal
                     onClose={() => setModalVisible(false)}
-                    addToDo={addToDo}
-                />
+                    addToDo={addToDo} />
             </Modal>
-            <Text style={A.header} >To Do</Text>
+            <Text style={A.header}>ToDo</Text>
             {auth.currentUser.emailVerified ? showContent() : showSendVerificationEmail()}
-            <Button title="logout" onPress={logout} color='#db4608' />
         </SafeAreaView>
     )
 }
